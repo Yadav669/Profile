@@ -1,112 +1,160 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Button, Form, Row, Col, Container } from "react-bootstrap";
 import Navbar from "../../components/header/Navbar";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../authenticate/AuthProvider";
-import {
-  MDBCol,
-  MDBContainer,
-  MDBRow,
-  MDBCard,
-  MDBCardText,
-  MDBCardBody,
-  MDBCardImage,
-  MDBTypography,
-  MDBIcon,
-} from "mdb-react-ui-kit";
-
 
 const Profile = () => {
   const { isAuthenticated } = useAuth(); // Access authentication context
   const navigate = useNavigate();
 
-  // Redirect to login if user is not authenticated
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    DOB: "",
+    age: "",
+    photo: "",
+  });
+
+  const [updatedUserData, setUpdatedUserData] = useState({ ...userData });
+
+  // Redirect to login if the user is not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/Login");
+    } else {
+      // Load user data from localStorage
+      const storedUserData = JSON.parse(localStorage.getItem("userData")) || {};
+      setUserData(storedUserData);
+      setUpdatedUserData(storedUserData);
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUpdatedUserData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setUpdatedUserData((prevData) => ({
+          ...prevData,
+          photo: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setUserData(updatedUserData);
+    localStorage.setItem("userData", JSON.stringify(updatedUserData));
+    alert("Profile updated successfully!");
+  };
+
+  const handleRemovePhoto = () => {
+    setUpdatedUserData((prevData) => ({
+      ...prevData,
+      photo: "",
+    }));
+  };
+
   if (!isAuthenticated) {
-    navigate("/login");
+    return null; // Prevent rendering of the profile before redirection
   }
 
   return (
     <>
       <Navbar />
-      <section className="vh-100" style={{ backgroundColor: "#f4f5f7" }}>
-        <MDBContainer className="py-5 h-100">
-          <MDBRow className="justify-content-center align-items-center h-100">
-            <MDBCol lg="6" className="mb-4 mb-lg-0">
-              <MDBCard className="mb-3" style={{ borderRadius: ".5rem" }}>
-                <MDBRow className="g-0">
-                  <MDBCol
-                    md="4"
-                    className="gradient-custom text-center text-white"
-                    style={{
-                      borderTopLeftRadius: ".5rem",
-                      borderBottomLeftRadius: ".5rem",
-                    }}
-                  >
-                    <MDBCardImage
-                      src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                      alt="Avatar"
-                      className="my-5"
-                      style={{ width: "80px" }}
-                      fluid
-                    />
-                    <MDBTypography tag="h5">Marie Horwitz</MDBTypography>
-                    <MDBCardText>Web Designer</MDBCardText>
-                    <MDBIcon far icon="edit mb-5" />
-                  </MDBCol>
-                  <MDBCol md="8">
-                    <MDBCardBody className="p-4">
-                      <MDBTypography tag="h6">Information</MDBTypography>
-                      <hr className="mt-0 mb-4" />
-                      <MDBRow className="pt-1">
-                        <MDBCol size="6" className="mb-3">
-                          <MDBTypography tag="h6">Email</MDBTypography>
-                          <MDBCardText className="text-muted">
-                            info@example.com
-                          </MDBCardText>
-                        </MDBCol>
-                        <MDBCol size="6" className="mb-3">
-                          <MDBTypography tag="h6">Phone</MDBTypography>
-                          <MDBCardText className="text-muted">
-                            123 456 789
-                          </MDBCardText>
-                        </MDBCol>
-                      </MDBRow>
+      <Container className="mt-4">
+        <h2 className="text-center">User Profile</h2>
+        <Row className="mt-4">
+          {/* Left Section for Profile Picture */}
+          <Col md={4} className="text-center">
+            <div>
+              <img
+                src={updatedUserData.photo || "https://via.placeholder.com/150"}
+                alt="User Profile"
+                className="img-fluid rounded-circle mb-3"
+                style={{ width: "150px", height: "150px" }}
+              />
+              <Form.Group controlId="formPhoto" className="mb-3">
+                <Form.Label>Change Profile Photo</Form.Label>
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                />
+              </Form.Group>
+              {updatedUserData.photo && (
+                <Button variant="danger" onClick={handleRemovePhoto}>
+                  Remove Photo
+                </Button>
+              )}
+            </div>
+          </Col>
 
-                      <MDBTypography tag="h6">Information</MDBTypography>
-                      <hr className="mt-0 mb-4" />
-                      <MDBRow className="pt-1">
-                        <MDBCol size="6" className="mb-3">
-                          <MDBTypography tag="h6">Email</MDBTypography>
-                          <MDBCardText className="text-muted">
-                            info@example.com
-                          </MDBCardText>
-                        </MDBCol>
-                        <MDBCol size="6" className="mb-3">
-                          <MDBTypography tag="h6">Phone</MDBTypography>
-                          <MDBCardText className="text-muted">
-                            123 456 789
-                          </MDBCardText>
-                        </MDBCol>
-                      </MDBRow>
+          {/* Right Section for Personal Information */}
+          <Col md={8}>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3" controlId="formName">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter your name"
+                  name="name"
+                  value={updatedUserData.name}
+                  onChange={handleInputChange}
+                />
+              </Form.Group>
 
-                      <div className="d-flex justify-content-start">
-                        <a href="#!">
-                          <MDBIcon fab icon="facebook me-3" size="lg" />
-                        </a>
-                        <a href="#!">
-                          <MDBIcon fab icon="twitter me-3" size="lg" />
-                        </a>
-                        <a href="#!">
-                          <MDBIcon fab icon="instagram me-3" size="lg" />
-                        </a>
-                      </div>
-                    </MDBCardBody>
-                  </MDBCol>
-                </MDBRow>
-              </MDBCard>
-            </MDBCol>
-          </MDBRow>
-        </MDBContainer>
-      </section>
+              <Form.Group className="mb-3" controlId="formEmail">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="Enter your email"
+                  name="email"
+                  value={updatedUserData.email}
+                  onChange={handleInputChange}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="formDOB">
+                <Form.Label>Date of Birth</Form.Label>
+                <Form.Control
+                  type="date"
+                  placeholder="Enter your DOB"
+                  name="DOB"
+                  value={updatedUserData.DOB}
+                  onChange={handleInputChange}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="formAge">
+                <Form.Label>Age</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Enter your age"
+                  name="age"
+                  value={updatedUserData.age}
+                  onChange={handleInputChange}
+                />
+              </Form.Group>
+
+              <Button variant="primary" type="submit" className="w-100">
+                Update Profile
+              </Button>
+            </Form>
+          </Col>
+        </Row>
+      </Container>
     </>
   );
 };

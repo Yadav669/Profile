@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../../components/header/Navbar";
 
-const Dash = () => {
+const DashBoard = () => {
   return (
     <>
       <Navbar />
@@ -13,4 +13,4 @@ const Dash = () => {
   );
 };
 
-export default Dash;
+export default DashBoard;

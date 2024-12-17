@@ -14,21 +14,18 @@ const Navbar = () => {
 
   const toggleView = () => {
     setIsProfile((prev) => !prev);
-    navigate(isProfile ? "/dashboard" : "/profile"); // Switch between Dashboard/Profile
+    navigate(isProfile ? "/" : "/Profile"); // Switch between Dashboard/Profile
   };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
-        <Link
-          className="navbar-brand"
-          to={isProfile ? "/profile" : "/dashboard"}
-        >
-          {isProfile ? "Profile" : "Dashboard"}
+        <Link className="navbar-brand" to={isProfile ? "/Profile" : "/"}>
+          {isProfile ? "Profile" : "DashBoard"}
         </Link>
         <div className="d-flex gap-3">
           <button className="btn btn-outline-light" onClick={toggleView}>
-            {isProfile ? "Dashboard" : "Profile"}
+            {isProfile ? "DashBoard" : "Profile"}
           </button>
           <button className="btn btn-outline-danger" onClick={handleLogout}>
             Logout

@@ -26,8 +26,15 @@ const Signin = () => {
   };
 
   return (
-    <div className="signin">
-      <div className="container">
+    <div
+      className="signin"
+      // style={{
+      //   backgroundImage:
+      //     "url(https://media.istockphoto.com/id/462568451/photo/internet-crime-and-electronic-banking-security.jpg?s=1024x1024&w=is&k=20&c=Mg6nfnrSyBOf0WjgJa00-VGgzXDnMAU4xgk3D9WVNiI=)",
+      //     backgroundRepeat: "no-repeat", objectFit: "cover"
+      // }}
+    >
+      <div className="container" >
         <div className="row justify-content-center align-items-center min-vh-100">
           <div className="col-md-6">
             <div className="card">

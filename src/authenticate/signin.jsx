@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -11,13 +12,13 @@ const Signin = () => {
     e.preventDefault();
 
     // Validate required fields
-    if (!email || !password) {
+    if (!name || !email || !password) {
       setErrorMessage("All fields are required.");
       return;
     }
 
     // Save user data to localStorage
-    localStorage.setItem("userData", JSON.stringify({ email, password }));
+    localStorage.setItem("userData", JSON.stringify({name, email, password }));
     console.log("User registered successfully!");
 
     // Redirect to login page after successful registration
@@ -33,6 +34,20 @@ const Signin = () => {
               <div className="card-body">
                 <h2 className="card-title text-center">Register</h2>
                 <form onSubmit={handleRegister}>
+                  <div className="mb-3">
+                    <label htmlFor="name" className="form-label">
+                      Name
+                    </label>
+                    <input
+                      type="name"
+                      className="form-control"
+                      id="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Enter your Name"
+                      autoComplete="off"
+                    />
+                  </div>
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label">
                       Email address

@@ -73,7 +73,7 @@ const Profile = () => {
   return (
     <>
       <Navbar />
-      <Container className="mt-4">
+      <Container className="mt-4" >
         <h2 className="text-center">User Profile</h2>
         <Row className="mt-4">
           {/* Left Section for Profile Picture */}
